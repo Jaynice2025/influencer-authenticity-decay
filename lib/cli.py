@@ -5,8 +5,7 @@ from lib.models.relationship import Relationship
 from lib.controllers.display import list_influencers, list_relationships
 from datetime import datetime
 
-def main_menu():
-    session = SessionLocal()
+def main_menu(db):
     while True:
         print("\n🎯 Influencer Management System")
         print("1. View All Influencers")
@@ -18,39 +17,36 @@ def main_menu():
         choice = input("Choose an option (1-5): ").strip()
 
         if choice == "1":
-            list_influencers(session)
+            list_influencers(db)
         elif choice == "2":
-            list_relationships(session)
+            list_relationships(db)
         elif choice == "3":
-            create_influencer(session)
+            create_influencer(db)  
         elif choice == "4":
-            create_relationship(session)
+            create_relationship(db)  
         elif choice == "5":
             print("Goodbye!")
             break
         else:
             print("Invalid choice. Try again.")
 
-def create_influencer(session):
+def create_influencer(db):
+    
     name = input("Enter influencer's name: ")
-    platform = input("Enter platform (e.g., Instagram, TikTok): ")
+    niche = input("Enter influencer's niche: ")
     follower_count = int(input("Enter follower count: "))
+    engagement_rate = float(input("Enter engagement rate: "))
 
-    new_influencer = Influencer(name=name, platform=platform, follower_count=follower_count)
-    session.add(new_influencer)
-    session.commit()
-    print(f"✅ Influencer '{name}' added successfully.")
-
-def create_relationship(session):
-    influencer_id = int(input("Enter Influencer ID: "))
-    related_entity = input("Enter Related Entity Name (e.g., agency): ")
-    relationship_type = input("Enter Relationship Type (e.g., Manager): ")
-
-    new_relationship = Relationship(
-        influencer_id=influencer_id,
-        related_entity=related_entity,
-        relationship_type=relationship_type
+    
+    new_influencer = Influencer.create(
+        db,  
+        name=name,
+        niche=niche,
+        follower_count=follower_count,
+        engagement_rate=engagement_rate
     )
-    session.add(new_relationship)
-    session.commit()
-    print("✅ Relationship added successfully.")
+
+    if new_influencer:
+        print(f"✅ Influencer '{new_influencer.name}' added successfully.")
+    else:
+        print("❌ Failed to create influencer.")

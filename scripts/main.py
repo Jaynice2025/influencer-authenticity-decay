@@ -23,9 +23,9 @@ def main_menu():
         elif choice == '2':
             view_all_partnerships()
         elif choice == '3':
-            create_influencer()
+            create_influencer()  
         elif choice == '4':
-            create_relationship()
+            create_relationship()  
         elif choice == '5':
             print("👋 Exiting program. Goodbye!")
             break
@@ -33,7 +33,7 @@ def main_menu():
             print("⚠️ Invalid choice. Please try again.")
 
 def view_all_influencers():
-    session = SessionLocal()
+    session = SessionLocal() 
     influencers = session.query(Influencer).all()
     print("\n📋 Influencers:")
     for i in influencers:
@@ -41,7 +41,7 @@ def view_all_influencers():
     session.close()
 
 def view_all_partnerships():
-    session = SessionLocal()
+    session = SessionLocal()  
     partnerships = session.query(Partnership).all()
     print("\n🔗 Partnerships:")
     for p in partnerships:
@@ -59,21 +59,30 @@ def create_influencer():
         return
     join_date = datetime.date.today()
 
-    new_inf = Influencer.create(name=name, niche=niche, follower_count=follower_count,
+
+    session = SessionLocal()
+
+    
+    new_inf = Influencer.create(session, name=name, niche=niche, follower_count=follower_count,
                                 engagement_rate=engagement_rate, join_date=join_date)
-    print(f"✅ Influencer '{name}' created with ID: {new_inf.id}")
+    
+    if new_inf:
+        print(f"✅ Influencer '{new_inf.name}' created with ID: {new_inf.id}")
+    else:
+        print("❌ Failed to create influencer.")
+    session.close()
 
 def create_relationship():
-    session = SessionLocal()
+    session = SessionLocal() 
     influencer_id = input("Enter Influencer ID: ")
     related_entity = input("Enter Related Entity Name (e.g., agency): ")
     relation_type = input("Enter Relationship Type (e.g., Manager): ")
 
     relationship = Relationship(
-    influencer_id=influencer_id,
-    related_entity=related_entity,
-    relationship_type=relationship_type  
-)
+        influencer_id=influencer_id,
+        related_entity=related_entity,
+        relationship_type=relation_type  
+    )
 
     session.add(relationship)
     session.commit()
